@@ -112,9 +112,9 @@ def find_changes(old, new):
 
         label = section.replace("_", " ").title()
         for item in new_set - old_set:
-            changes.append(f"✅ NAYA {label} add hua:\n  {item}")
+            changes.append(f"✅ NEW {label} added:\n  {item}")
         for item in old_set - new_set:
-            changes.append(f"❌ {label} remove hua:\n  {item}")
+            changes.append(f"❌ {label} removed:\n  {item}")
     return changes
 
 
@@ -156,7 +156,7 @@ def run_monitor():
     html = fetch_page(URL)
     if not html:
         msg = (f"⚠️ <b>Website Fetch FAILED</b>\n🕐 {now}\n🔗 {URL}\n\n"
-               f"Website respond nahi kar rahi.")
+               f"Website not responding.")
         print("\n[FAIL] Website fetch nahi ho saki.")
         send_telegram(msg)
         return
@@ -167,8 +167,8 @@ def run_monitor():
     if old_state is None:
         save_state(new_state)
         summary = (
-            f"🟢 <b>Website Monitor Shuru Hua</b>\n🕐 {now}\n🔗 {URL}\n\n"
-            f"Baseline save ho gayi:\n"
+            f"🟢 <b>Website Monitoring Initiated</b>\n🕐 {now}\n🔗 {URL}\n\n"
+            f"Baseline Snapshot Saved:\n"
             f"  • Links: {len(new_state['links'])}\n"
             f"  • Action Buttons: {len(new_state['action_buttons'])}\n"
             f"  • Form Inputs: {len(new_state['form_inputs'])}\n"
@@ -187,9 +187,9 @@ def run_monitor():
         change_text = "\n".join(changes)
         msg = (
             f"🚨 <b>Website Change Detected!</b>\n🕐 {now}\n🔗 {URL}\n\n"
-            f"<b>{len(changes)} change(s) mile:</b>\n\n{change_text}"
+            f"<b>{len(changes)} change(s) :</b>\n\n{change_text}"
         )
-        print(f"\n🚨 {len(changes)} CHANGE(S) MILE!\n")
+        print(f"\n🚨 {len(changes)} CHANGE(S) !\n")
         for c in changes:
             print(f"  {c}")
         send_telegram(msg)
