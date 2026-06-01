@@ -1,0 +1,141 @@
+{
+  "links": [
+    {
+      "text": "Screen Reader",
+      "href": "#"
+    },
+    {
+      "text": "Track Applicant Status",
+      "href": "#"
+    },
+    {
+      "text": "Download Annapurna Yojana Form (English)",
+      "href": "public/pdf/Annapurna_Yojana_Family_Level_Data_Collection_Form_English.pdf"
+    },
+    {
+      "text": "ডাউনলোড অন্নপূর্ণা যোজনা ফর্ম (বাংলায়)",
+      "href": "public/pdf/Annapurna_Yojana_Family_Level_Data_Collection_Form_Bangla.pdf"
+    },
+    {
+      "text": "अन्नपूर्णा योजना का फॉर्म डाउनलोड करें (हिन्दी में)",
+      "href": "public/pdf/Annapurna_Yojana_Family_Level_Data_Collection_Form_Hindi.pdf"
+    },
+    {
+      "text": "",
+      "href": "javascript:void(0)"
+    },
+    {
+      "text": "Forget Password",
+      "href": "https://socialsecurity.wb.gov.in/forget-password"
+    },
+    {
+      "text": "National Informatics Centre (NIC).",
+      "href": "http://www.nic.in/"
+    },
+    {
+      "text": "Legal Disclaimer",
+      "href": "#exampleModal"
+    },
+    {
+      "text": "Copyright Policy",
+      "href": "https://socialsecurity.wb.gov.in/copyright-policy"
+    },
+    {
+      "text": "Privacy Policy",
+      "href": "https://socialsecurity.wb.gov.in/privacy-policy"
+    },
+    {
+      "text": "Hyperlink Policy",
+      "href": "https://socialsecurity.wb.gov.in/hyperlink-policy"
+    },
+    {
+      "text": "Terms & Condition",
+      "href": "https://socialsecurity.wb.gov.in/terms-policy"
+    }
+  ],
+  "action_buttons": [
+    {
+      "text": "Track Applicant Status",
+      "href": "#"
+    },
+    {
+      "text": "Download Annapurna Yojana Form (English)",
+      "href": "public/pdf/Annapurna_Yojana_Family_Level_Data_Collection_Form_English.pdf"
+    },
+    {
+      "text": "ডাউনলোড অন্নপূর্ণা যোজনা ফর্ম (বাংলায়)",
+      "href": "public/pdf/Annapurna_Yojana_Family_Level_Data_Collection_Form_Bangla.pdf"
+    },
+    {
+      "text": "अन्नपूर्णा योजना का फॉर्म डाउनलोड करें (हिन्दी में)",
+      "href": "public/pdf/Annapurna_Yojana_Family_Level_Data_Collection_Form_Hindi.pdf"
+    }
+  ],
+  "form_inputs": [
+    {
+      "name": "",
+      "type": "checkbox",
+      "placeholder": ""
+    },
+    {
+      "name": "mobile_no",
+      "type": "text",
+      "placeholder": "Enter Registered Mobile No."
+    },
+    {
+      "name": "captcha",
+      "type": "text",
+      "placeholder": "Enter Captcha"
+    },
+    {
+      "name": "password",
+      "type": "password",
+      "placeholder": "Enter Password"
+    }
+  ],
+  "buttons": [
+    "Login (for Office user only)",
+    ""
+  ],
+  "headings": [
+    {
+      "tag": "h2",
+      "text": "পশ্চিমবঙ্গ সরকার"
+    },
+    {
+      "tag": "h3",
+      "text": "Government Of West Bengal"
+    },
+    {
+      "tag": "h2",
+      "text": "Annapurna Yojana Portal"
+    }
+  ],
+  "footer_links": [
+    {
+      "text": "National Informatics Centre (NIC).",
+      "href": "http://www.nic.in/"
+    },
+    {
+      "text": "Legal Disclaimer",
+      "href": "#exampleModal"
+    },
+    {
+      "text": "Copyright Policy",
+      "href": "https://socialsecurity.wb.gov.in/copyright-policy"
+    },
+    {
+      "text": "Privacy Policy",
+      "href": "https://socialsecurity.wb.gov.in/privacy-policy"
+    },
+    {
+      "text": "Hyperlink Policy",
+      "href": "https://socialsecurity.wb.gov.in/hyperlink-policy"
+    },
+    {
+      "text": "Terms & Condition",
+      "href": "https://socialsecurity.wb.gov.in/terms-policy"
+    }
+  ],
+  "page_title": "Annapurna Yojana | Government of West Bengal"
+}
