@@ -2,7 +2,7 @@ name: Website Monitor
 
 on:
   schedule:
-    - cron: '*/30 * * * *'   # Har 30 minute mein run hoga
+    - cron: '0 * * * *'   # Har 30 minute mein run hoga
   workflow_dispatch:           # Manual run bhi kar sakte ho GitHub se
 
 jobs:
