@@ -14,7 +14,7 @@ from datetime import datetime
 # ============================================================
 #  CONFIGURATION — GitHub Secrets se aayega (hardcode mat karo)
 # ============================================================
-URL        = "https://socialsecurity.wb.gov.in/login"
+URL        = "https://socialregistry.wb.gov.in"
 STATE_FILE = "website_state.json"
 
 TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "")
