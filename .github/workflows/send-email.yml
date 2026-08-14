@@ -1,8 +1,8 @@
 name: Send Email Every 15 Minutes
 
 on:
-  schedule:
-    - cron: "*/15 * * * *"
+#  schedule:
+#    - cron: "*/15 * * * *"
   workflow_dispatch: {}   # manual run button for testing
 
 jobs:
