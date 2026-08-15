@@ -12,12 +12,15 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Unzip project (if uploaded as SDKMusic.zip)
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Unzip project (if uploaded as SDKMusic-1.zip)
         run: |
           if [ -f SDKMusic-1.zip ]; then
             unzip -o SDKMusic-1.zip -d .
@@ -25,7 +28,9 @@ jobs:
 
       - name: Build debug APK
         working-directory: SDKMusic
-        run: gradle assembleDebug --no-daemon
+        run: |
+          gradle wrapper --gradle-version 8.7
+          ./gradlew assembleDebug --no-daemon
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
