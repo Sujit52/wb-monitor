@@ -10,7 +10,7 @@ EMAIL_RECEIVER = os.environ.get("EMAIL_RECEIVER", "sujithembram52@gmail.com")
 
 SUBJECT = "Application For Aawas Plus"
 
-BODY = """Name -Shrimath Hembram
+BODY = """Name - Shrimath Hembram
 Village. - Kalparashi
 P.O. - Silda
 G.P. - Silda
