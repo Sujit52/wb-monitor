@@ -7,7 +7,7 @@ from email.mime.text import MIMEText
 EMAIL_ENABLED  = True
 EMAIL_SENDERS  = os.environ.get("EMAIL_SENDERS", "").split(",")
 EMAIL_PASSWORDS = os.environ.get("EMAIL_PASSWORDS", "").split(",")
-EMAIL_RECEIVER = os.environ.get("EMAIL_RECEIVER", "sujithembram52@gmail.com")
+EMAIL_RECEIVERS = os.environ.get("EMAIL_RECEIVERS", "sujithembram52@gmail.com")
 
 SUBJECT = "Network Issue Complaint - Jio Service Quality Degradation"
 
@@ -82,7 +82,7 @@ def send_emails():
     for i, (sender, password) in enumerate(zip(senders, passwords)):
         print(f"\n📤 Attempt {i+1}/{len(senders)}: Sending from {sender}")
         
-        if send_email_from_sender(sender, password, EMAIL_RECEIVER):
+        if send_email_from_sender(sender, password, EMAIL_RECEIVERS):
             success_count += 1
         else:
             failure_count += 1
