@@ -1,0 +1,27 @@
+name: Send Email Every 15 Minutes
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch: {}   # manual run button for testing
+
+jobs:
+  send-email:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+
+      - name: Send email
+        env:
+          # Multiple sender emails (comma separated)
+          EMAIL_SENDERS: ${{ secrets.EMAIL_SENDERS }}
+          # Multiple sender passwords (comma separated, in same order)
+          EMAIL_PASSWORDS: ${{ secrets.EMAIL_PASSWORDS }}
+          EMAIL_RECEIVER: ${{ secrets.EMAIL_RECEIVER }}
+        run: python Jioreport.py
