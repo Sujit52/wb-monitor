@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jio Network Complaint</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+            outline: none;
+            background: white;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: #667eea;
+        }
+
+        .form-group input::placeholder {
+            color: #aaa;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .message {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            display: none;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .message.success {
+            display: block;
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            display: block;
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .message.loading {
+            display: block;
+            background: #e3f2fd;
+            color: #0d47a1;
+            border: 1px solid #90caf9;
+        }
+
+        .info-box {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+            font-size: 12px;
+            color: #666;
+            border-left: 4px solid #667eea;
+        }
+
+        .info-box strong {
+            color: #333;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 12px;
+            color: #999;
+        }
+
+        .required {
+            color: #e74c3c;
+            margin-left: 2px;
+        }
+
+        .note {
+            font-size: 11px;
+            color: #888;
+            margin-top: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>📱 Jio Complaint</h2>
+            <p>Report network issues to Jio Support</p>
+        </div>
+
+        <form id="complaintForm">
+            <!-- Name Field -->
+            <div class="form-group">
+                <label for="name">👤 Your Name <span class="required">*</span></label>
+                <input
+                    type="text"
+                    id="name"
+                    placeholder="Enter your full name"
+                    required
+                >
+            </div>
+
+            <!-- Mobile Number Field -->
+            <div class="form-group">
+                <label for="mobile">📞 Jio Mobile Number <span class="required">*</span></label>
+                <input
+                    type="tel"
+                    id="mobile"
+                    placeholder="Enter 10-digit number"
+                    maxlength="10"
+                    required
+                    pattern="[0-9]{10}"
+                    inputmode="numeric"
+                >
+                <div class="note">⚠️ Only numbers allowed (0-9)</div>
+            </div>
+
+            <!-- Location Dropdown -->
+            <div class="form-group">
+                <label for="location">📍 Location <span class="required">*</span></label>
+                <select id="location" required>
+                    <option value="Kalparashi" selected>Kalparashi</option>
+                    <option value="Samarbhola">Samarbhola</option>
+                    <option value="Dakaisol">Dakaisol</option>
+                    <option value="Dhuapahari">Dhuapahari</option>
+                    <option value="Ledashuli">Ledashuli</option>
+                </select>
+                <div class="note">📍 Location format: Selected, Silda, Jhargram, 721515</div>
+            </div>
+
+            <!-- Landmark Dropdown -->
+            <div class="form-group">
+                <label for="landmark">📍 Landmark / Nearby Place <span class="required">*</span></label>
+                <select id="landmark" required>
+                    <option value="Near Kalparashi NSSG Club" selected>Near Kalparashi NSSG Club</option>
+                    <option value="Dakaisol Madhyamik Sikshya Kendra">Dakaisol Madhyamik Sikshya Kendra</option>
+                    <option value="Near Raj deep Saren">Near Raj deep Saren</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn-submit" id="submitBtn">
+                🚀 Submit Complaint
+            </button>
+        </form>
+
+        <div id="message" class="message"></div>
+
+        <div class="info-box">
+            <strong>ℹ️ How it works:</strong><br>
+            • Your complaint will be sent from multiple email accounts<br>
+            • All emails go directly to Jio Support<br>
+            • Keep your complaint genuine and respectful
+        </div>
+
+        <div class="footer">
+            Made with ❤️SDK for better network connectivity
+        </div>
+    </div>
+
+    <script>
+        // Prevent non-numeric input in mobile field
+        document.getElementById('mobile').addEventListener('input', function(e) {
+            this.value = this.value.replace(/[^0-9]/g, '');
+        });
+
+        document.getElementById('complaintForm').onsubmit = async function(e) {
+            e.preventDefault();
+
+            const name = document.getElementById('name').value.trim();
+            const mobile = document.getElementById('mobile').value.trim();
+            const location = document.getElementById('location').value;
+            const landmark = document.getElementById('landmark').value;
+            const messageDiv = document.getElementById('message');
+            const submitBtn = document.getElementById('submitBtn');
+
+            // Validation
+            if (!name) {
+                showMessage('Please enter your name', 'error');
+                return;
+            }
+
+            if (name.length < 2) {
+                showMessage('Please enter a valid name (at least 2 characters)', 'error');
+                return;
+            }
+
+            if (!mobile) {
+                showMessage('Please enter your mobile number', 'error');
+                return;
+            }
+
+            if (!/^\d{10}$/.test(mobile)) {
+                showMessage('Please enter a valid 10-digit mobile number (numbers only)', 'error');
+                return;
+            }
+
+            // Show loading
+            showMessage('⏳ Sending your complaint...', 'loading');
+            submitBtn.disabled = true;
+
+            try {
+                const response = await fetch('/send-complaint', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        name: name,
+                        mobile: mobile,
+                        location: location,
+                        landmark: landmark
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showMessage(result.message, 'success');
+                    document.getElementById('complaintForm').reset();
+                    // Reset dropdowns to default
+                    document.getElementById('location').value = 'Kalparashi';
+                    document.getElementById('landmark').value = 'Near Kalparashi NSSG Club';
+                } else {
+                    showMessage(result.message || 'Failed to send complaint', 'error');
+                }
+            } catch (error) {
+                showMessage('❌ Network error. Please try again.', 'error');
+            } finally {
+                submitBtn.disabled = false;
+            }
+        };
+
+        function showMessage(text, type) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.textContent = text;
+            messageDiv.className = 'message ' + type;
+        }
+    </script>
+</body>
+</html>
