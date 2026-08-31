@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>QR Ticket Scanner</title>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
+    <!-- QR Scanner Library (supports both camera + image file) -->
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+
+    <style>
+        * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 16px;
+            background: #0d1117;
+            color: #e6edf3;
+            min-height: 100vh;
+        }
+
+        /* ── HTTPS WARNING BANNER ── */
+        #httpsBanner {
+            display: none;
+            background: #3d2b00;
+            border: 1px solid #f0a500;
+            border-radius: 10px;
+            padding: 12px 14px;
+            margin-bottom: 14px;
+            font-size: 13px;
+            color: #ffd580;
+            line-height: 1.6;
+        }
+        #httpsBanner strong { color: #ffb703; display: block; margin-bottom: 4px; }
+
+        .container {
+            background: #161b22;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+        }
+        h1 { font-size: 22px; text-align: center; color: #58a6ff; margin-bottom: 6px; }
+        .sub { text-align: center; color: #8b949e; font-size: 13px; margin-bottom: 16px; }
+
+        /* ── MODE TABS ── */
+        .mode-tabs {
+            display: flex;
+            background: #0d1117;
+            border-radius: 10px;
+            padding: 4px;
+            margin-bottom: 14px;
+            gap: 4px;
+        }
+        .mode-tab {
+            flex: 1;
+            padding: 9px 6px;
+            text-align: center;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            color: #8b949e;
+            border: none;
+            background: transparent;
+            transition: all 0.2s;
+        }
+        .mode-tab.active {
+            background: #21262d;
+            color: #58a6ff;
+        }
+        .mode-tab:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        #reader { width: 100%; border-radius: 12px; overflow: hidden; background: #0d1117; }
+        #reader video { border-radius: 12px; }
+
+        /* ── IMAGE UPLOAD AREA ── */
+        #imageUploadArea {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+        .upload-zone {
+            width: 100%;
+            border: 2px dashed #30363d;
+            border-radius: 12px;
+            padding: 32px 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.2s, background 0.2s;
+            background: #0d1117;
+            position: relative;
+        }
+        .upload-zone:hover, .upload-zone.drag { border-color: #58a6ff; background: #0d1f36; }
+        .upload-zone input[type="file"] {
+            position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+        }
+        .upload-icon { font-size: 40px; margin-bottom: 8px; }
+        .upload-label { color: #8b949e; font-size: 14px; line-height: 1.5; }
+        .upload-label span { color: #58a6ff; font-weight: 600; }
+
+        #previewImg {
+            max-width: 100%;
+            max-height: 260px;
+            border-radius: 10px;
+            display: none;
+            border: 1px solid #30363d;
+        }
+
+        /* ── STATUS BOX ── */
+        .status-box {
+            margin-top: 14px;
+            padding: 14px;
+            border-radius: 10px;
+            background: #0d1117;
+            border-left: 4px solid #58a6ff;
+            min-height: 56px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .status-box.success { border-left-color: #2ea043; }
+        .status-box.error   { border-left-color: #f85149; }
+        .status-box .icon   { font-size: 26px; }
+        .status-box .msg    { flex: 1; font-size: 14px; word-break: break-all; padding-top: 3px; }
+        .status-box .detail { font-size: 12px; color: #8b949e; width: 100%; margin-top: 4px; }
+
+        /* ── BUTTONS ── */
+        .btn {
+            background: #238636; color: white; border: none;
+            padding: 11px 20px; border-radius: 8px; font-size: 15px;
+            cursor: pointer; width: 100%; margin-top: 10px; font-weight: 600;
+            transition: background 0.2s;
+        }
+        .btn:hover { background: #2ea043; }
+        .btn-blue { background: #1f6feb; }
+        .btn-blue:hover { background: #388bfd; }
+        .btn-danger { background: #da3633; }
+        .btn-danger:hover { background: #f85149; }
+        .btn-gray { background: #21262d; color: #8b949e; }
+
+        /* ── HISTORY ── */
+        .history-header {
+            margin-top: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .history-label { font-weight: 600; color: #8b949e; font-size: 14px; }
+        .history {
+            margin-top: 8px;
+            background: #0d1117;
+            border-radius: 10px;
+            padding: 10px 12px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .history-item {
+            padding: 6px 0;
+            border-bottom: 1px solid #21262d;
+            font-size: 13px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+        }
+        .history-item:last-child { border-bottom: none; }
+        .badge {
+            background: #238636; padding: 1px 8px;
+            border-radius: 12px; font-size: 11px; white-space: nowrap;
+        }
+        .badge.used { background: #da3633; }
+        #countBadge {
+            background: #21262d; padding: 2px 12px;
+            border-radius: 20px; font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- HTTPS Warning -->
+<div id="httpsBanner">
+    <strong>⚠️ Camera kaam nahi karega (HTTP site)</strong>
+    Chrome camera permission sirf <strong>HTTPS</strong> pe deta hai. Aapki site HTTP pe hai isliye camera block hai.<br><br>
+    <strong>Fix options:</strong><br>
+    1️⃣ <strong>GitHub Pages</strong> pe host karo (free HTTPS) — github.io<br>
+    2️⃣ InfinityFree pe <strong>Cloudflare SSL</strong> lagao<br>
+    3️⃣ Abhi ke liye <strong>Image Upload</strong> mode use karo 👇
+</div>
+
+<div class="container">
+    <h1>🎟️ QR Ticket Scanner</h1>
+    <div class="sub">Movie / Event Ticket Validator</div>
+
+    <!-- Mode Tabs -->
+    <div class="mode-tabs">
+        <button class="mode-tab active" id="tabCamera" onclick="switchMode('camera')">📷 Camera</button>
+        <button class="mode-tab" id="tabImage" onclick="switchMode('image')">🖼️ Image Upload</button>
+    </div>
+
+    <!-- Camera Mode -->
+    <div id="cameraMode">
+        <div id="reader"></div>
+        <button class="btn btn-blue" id="startBtn" onclick="startScanner()">📸 Camera Scanner Shuru Karo</button>
+        <button class="btn btn-danger" id="stopBtn" style="display:none" onclick="stopScanner()">⏹️ Band Karo</button>
+    </div>
+
+    <!-- Image Upload Mode -->
+    <div id="imageUploadArea">
+        <div class="upload-zone" id="uploadZone">
+            <input type="file" accept="image/*" id="fileInput" onchange="handleFileSelect(event)" capture="environment" />
+            <div class="upload-icon">📁</div>
+            <div class="upload-label">
+                QR code ki photo yahan daalo<br>
+                <span>Tap karo ya photo khicho</span>
+            </div>
+        </div>
+        <img id="previewImg" alt="Preview" />
+        <button class="btn btn-blue" id="scanImageBtn" style="display:none" onclick="scanFromImage()">🔍 Is Image Se QR Scan Karo</button>
+    </div>
+
+    <!-- Status -->
+    <div id="statusBox" class="status-box">
+        <span class="icon">📷</span>
+        <span class="msg" id="statusMsg">Mode chuno aur scanning shuru karo</span>
+        <span class="detail" id="statusDetail"></span>
+    </div>
+
+    <!-- History -->
+    <div class="history-header">
+        <span class="history-label">📋 Scanned History</span>
+        <span id="countBadge">0</span>
+    </div>
+    <div id="historyList" class="history">
+        <div style="color:#8b949e; text-align:center; padding:10px;">Abhi tak koi scan nahi hua</div>
+    </div>
+</div>
+
+<script>
+// ── FIREBASE ──
+const firebaseConfig = {
+    apiKey: "AIzaSyAd6nRHbLinb8LmQyep32gAmyRMAdIRBno",
+    authDomain: "kheloff-72149.firebaseapp.com",
+    databaseURL: "https://kheloff-72149-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "kheloff-72149",
+    storageBucket: "kheloff-72149.appspot.com",
+    messagingSenderId: "9150632293",
+    appId: "1:9150632293:web:f693efe15e12e92c20918c"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+// ── GLOBALS ──
+let html5QrCode = null;
+let isScanning = false;
+let isHttps = location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+let selectedFile = null;
+
+// ── ON LOAD: check HTTPS ──
+window.addEventListener('load', () => {
+    if (!isHttps) {
+        document.getElementById('httpsBanner').style.display = 'block';
+        // Disable camera tab, auto-switch to image
+        document.getElementById('tabCamera').disabled = true;
+        switchMode('image');
+    } else {
+        // HTTPS — auto start camera
+        setTimeout(startScanner, 400);
+    }
+    updateCount();
+});
+
+// ── MODE SWITCH ──
+function switchMode(mode) {
+    const camMode = document.getElementById('cameraMode');
+    const imgMode = document.getElementById('imageUploadArea');
+    const tabCam  = document.getElementById('tabCamera');
+    const tabImg  = document.getElementById('tabImage');
+
+    if (mode === 'camera') {
+        if (!isHttps) return; // blocked
+        camMode.style.display = 'block';
+        imgMode.style.display = 'none';
+        tabCam.classList.add('active');
+        tabImg.classList.remove('active');
+    } else {
+        // Stop camera if running
+        if (isScanning) stopScanner();
+        camMode.style.display = 'none';
+        imgMode.style.display = 'flex';
+        tabCam.classList.remove('active');
+        tabImg.classList.add('active');
+        setStatus('🖼️', 'QR code wali image select karo', '');
+    }
+}
+
+// ── HELPERS ──
+function extractBookingId(raw) {
+    if (!raw) return null;
+    const parts = raw.split('-');
+    return parts.length > 0 ? parts[0].trim() : null;
+}
+
+function getDisplayData(raw) {
+    const parts = raw.split(',');
+    if (parts.length >= 4) {
+        return `🎫 ${parts[0]?.trim()||''} | 💰 ${parts[1]?.trim()||''} | 📅 ${parts[2]?.trim()||''} | ⏰ ${parts[3]?.trim()||''}`;
+    }
+    return raw;
+}
+
+function setStatus(icon, msg, type) {
+    document.querySelector('.status-box .icon').textContent = icon;
+    document.getElementById('statusMsg').textContent = msg;
+    document.getElementById('statusDetail').textContent = '';
+    const box = document.getElementById('statusBox');
+    box.className = 'status-box' + (type ? ' ' + type : '');
+}
+
+function setDetail(text) {
+    document.getElementById('statusDetail').textContent = text;
+}
+
+// ── FIREBASE CHECK & SAVE ──
+async function checkAndSaveQR(rawData) {
+    const bookingId = extractBookingId(rawData);
+    if (!bookingId) {
+        setStatus('❌', 'Invalid QR — Booking ID nahi mila', 'error');
+        return;
+    }
+    setStatus('⏳', 'Firebase check ho raha hai...', '');
+    try {
+        const snap = await db.ref('scanned/' + bookingId).once('value');
+        const existing = snap.val();
+        if (existing) {
+            const t = existing.timestamp ? new Date(existing.timestamp).toLocaleString('en-IN') : '?';
+            setStatus('🚫', '⚠️ Yeh QR already use ho chuka hai!', 'error');
+            setDetail(`Pehle scan: ${t} | Booking: ${bookingId}`);
+            addHistory(bookingId, true);
+        } else {
+            await db.ref('scanned/' + bookingId).set({
+                bookingId,
+                rawData,
+                timestamp: Date.now(),
+                scannedAt: new Date().toISOString()
+            });
+            setStatus('✅', '✔️ Valid ticket! Entry allow hai.', 'success');
+            setDetail(getDisplayData(rawData));
+            addHistory(bookingId, false);
+            updateCount();
+        }
+    } catch (err) {
+        setStatus('⚠️', 'Firebase error — internet check karo', 'error');
+        setDetail(err.message);
+    }
+}
+
+// ── CAMERA SCANNER ──
+function startScanner() {
+    if (isScanning || !isHttps) return;
+    const el = document.getElementById('reader');
+    el.innerHTML = '';
+    html5QrCode = new Html5Qrcode("reader");
+    html5QrCode.start(
+        { facingMode: "environment" },
+        { fps: 15, qrbox: { width: 260, height: 260 }, aspectRatio: 1.0 },
+        async (decoded) => {
+            html5QrCode.pause();
+            isScanning = false;
+            document.getElementById('startBtn').style.display = 'block';
+            document.getElementById('stopBtn').style.display = 'none';
+            await checkAndSaveQR(decoded);
+            setTimeout(() => {
+                if (html5QrCode) { html5QrCode.resume(); isScanning = true; }
+                document.getElementById('startBtn').style.display = 'none';
+                document.getElementById('stopBtn').style.display = 'block';
+            }, 2500);
+        },
+        () => {}
+    ).then(() => {
+        isScanning = true;
+        document.getElementById('startBtn').style.display = 'none';
+        document.getElementById('stopBtn').style.display = 'block';
+        setStatus('📷', 'Camera active — QR code dikhao', '');
+    }).catch(err => {
+        setStatus('❌', 'Camera start nahi hua', 'error');
+        setDetail('Permission do aur dobara try karo: ' + err);
+    });
+}
+
+function stopScanner() {
+    if (html5QrCode && isScanning) {
+        html5QrCode.stop().then(() => {
+            isScanning = false;
+            document.getElementById('startBtn').style.display = 'block';
+            document.getElementById('stopBtn').style.display = 'none';
+            setStatus('⏹️', 'Scanner ruk gaya', '');
+        }).catch(console.error);
+    }
+}
+
+// ── IMAGE UPLOAD MODE ──
+function handleFileSelect(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    selectedFile = file;
+    const url = URL.createObjectURL(file);
+    const img = document.getElementById('previewImg');
+    img.src = url;
+    img.style.display = 'block';
+    document.getElementById('scanImageBtn').style.display = 'block';
+    setStatus('🖼️', 'Image ready — "Scan Karo" dabao', '');
+}
+
+// Drag-and-drop support
+const zone = document.getElementById('uploadZone');
+zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag'); });
+zone.addEventListener('dragleave', () => zone.classList.remove('drag'));
+zone.addEventListener('drop', e => {
+    e.preventDefault(); zone.classList.remove('drag');
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith('image/')) {
+        selectedFile = file;
+        const url = URL.createObjectURL(file);
+        const img = document.getElementById('previewImg');
+        img.src = url; img.style.display = 'block';
+        document.getElementById('scanImageBtn').style.display = 'block';
+        setStatus('🖼️', 'Image ready — "Scan Karo" dabao', '');
+    }
+});
+
+async function scanFromImage() {
+    if (!selectedFile) return;
+    setStatus('⏳', 'Image se QR dhundh raha hai...', '');
+    try {
+        const scanner = new Html5Qrcode("reader");
+        // Use a temp hidden element so reader div stays intact
+        const result = await Html5Qrcode.scanFile(selectedFile, false);
+        setStatus('📷', 'QR mila! Firebase check ho raha hai...', '');
+        await checkAndSaveQR(result);
+    } catch (err) {
+        setStatus('❌', 'Image mein QR code nahi mila', 'error');
+        setDetail('Clear, achhi light wali photo daalo jisme QR clearly dikh raha ho');
+    }
+}
+
+// ── HISTORY ──
+function addHistory(bookingId, isDuplicate) {
+    const list = document.getElementById('historyList');
+    const empty = list.querySelector('div[style]');
+    if (empty) empty.remove();
+    const div = document.createElement('div');
+    div.className = 'history-item';
+    div.innerHTML = `
+        <span style="word-break:break-all;flex:1">${bookingId}</span>
+        <span class="badge ${isDuplicate ? 'used' : ''}">${isDuplicate ? '⚠️ Used' : '✅ Valid'}</span>
+    `;
+    list.prepend(div);
+    while (list.children.length > 25) list.removeChild(list.lastChild);
+}
+
+function updateCount() {
+    db.ref('scanned').once('value', snap => {
+        document.getElementById('countBadge').textContent = snap.exists() ? snap.numChildren() : 0;
+    });
+}
+</script>
+</body>
+</html>
