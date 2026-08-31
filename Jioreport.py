@@ -7,7 +7,7 @@ from email.mime.text import MIMEText
 EMAIL_ENABLED  = True
 EMAIL_SENDERS  = os.environ.get("EMAIL_SENDERS", "").split(",")
 EMAIL_PASSWORDS = os.environ.get("EMAIL_PASSWORDS", "").split(",")
-EMAIL_RECEIVERS = os.environ.get("EMAIL_RECEIVERS", "sujithembram52@gmail.com")
+EMAIL_RECEIVERS = os.environ.get("EMAIL_RECEIVERS", "care@jio.com")
 
 SUBJECT = "Network Issue Complaint - Jio Service Quality Degradation"
 
