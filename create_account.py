@@ -86,6 +86,10 @@ def account_banao(server="usa"):
 def main():
     print("Account bana raha hun...")
     acc = account_banao(server="usa")
+ #server= mein konsa server create karna hai woh likho jese brazil server create karna hai toh kansas add karna hai
+    #Singapore 🇸🇬 usa
+    #Brazil 🇧🇷 kansas
+    #Indonesia 🇮🇩 indonesia
 
     if acc:
         print(f"Ban gaya: {acc['ssh_user']}")
