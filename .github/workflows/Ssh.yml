@@ -1,0 +1,32 @@
+name: Auto Create Danael Account
+
+on:
+  schedule:
+    # Har 3 din mein ek baar chalega (raat 12:00 UTC = subah 5:30 IST)
+    # Cron format: minute hour day month weekday
+    # "*/3" matlab har 3 din
+    - cron: '0 0 */3 * *'
+  workflow_dispatch:   # manual run button bhi milega
+
+jobs:
+  create:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Python setup
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Run account creator
+        env:
+          TG_TOKEN: ${{ secrets.TG_TOKEN }}
+          TG_CHAT_ID: ${{ secrets.TG_CHAT_ID }}
+          FIXED_PASSWORD: "973497"
+        run: python create_account.py
