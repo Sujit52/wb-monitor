@@ -1,0 +1,13 @@
+[project]
+name = "ip-cycler-admin"
+version = "0.1.0"
+description = "Secure FastAPI admin panel for IP Cycler device authorization"
+requires-python = ">=3.10"
+dependencies = [
+    "fastapi[standard]>=0.115,<1",
+    "firebase-admin>=6.6,<7",
+    "itsdangerous>=2.2,<3",
+]
+
+[tool.fastapi]
+entrypoint = "app.main:app"
