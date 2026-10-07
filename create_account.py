@@ -103,7 +103,7 @@ def account_banao(server="usa"):
 
 def main():
     print("Account bana raha hun...")
-    acc = account_banao(server="kansas")
+    acc = account_banao(server="india")
     # server= mein konsa server create karna hai woh likho
     # Singapore 🇸🇬 usa
     # Brazil 🇧🇷 kansas
